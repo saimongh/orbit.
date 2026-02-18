@@ -3,7 +3,7 @@ let items = JSON.parse(localStorage.getItem('taskManagerItems')) || [];
 
 // Main Circles (Global)
 let categories = JSON.parse(localStorage.getItem('taskManagerCategories')) || [
-    { id: 'goal', name: 'Goals' }, { id: 'project', name: 'Projects' }, { id: 'task', name: 'Tasks' }
+    { id: 'school', name: 'School' }, { id: 'friends', name: 'Friends' }, { id: 'family', name: 'Family' }
 ];
 
 // Default Detail Template

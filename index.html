@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>orbit.</title>
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234caf50'><path d='M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z'/></svg>">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 id="appTitle">orbit.</h1>
+            <div class="header-actions">
+                <button class="icon-btn-header" onclick="triggerImport()" title="Import Data"><i class="fas fa-file-import"></i></button>
+                <button class="icon-btn-header" onclick="exportData()" title="Export Data"><i class="fas fa-download"></i></button>
+                <button class="icon-btn-header" onclick="toggleTheme()" id="themeBtn" title="Toggle Light/Dark"><i class="fas fa-moon"></i></button>
+                <button class="icon-btn-header" onclick="openSettings()" title="Settings"><i class="fas fa-cog"></i></button>
+            </div>
+            <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(this)">
+        </header>
+
+        <div class="main-content">
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <div id="sidebarNav" style="display: none; margin-bottom: 15px;">
+                        <button class="btn-text" onclick="exitContactView()" style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--accent-color);">
+                            <i class="fas fa-arrow-left"></i> Back to Orbit
+                        </button>
+                    </div>
+
+                    <div class="filter-wrapper">
+                        <div class="active-tags-container" id="activeTagsContainer"></div>
+                        <input type="text" id="catFilterInput" class="cat-filter-input" placeholder="Enter tags to search" autocomplete="off">
+                        <div class="suggestions-dropdown" id="suggestionsDropdown"></div>
+                    </div>
+
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search..." onkeyup="handleSearch(this.value)">
+                    </div>
+                    <div class="sort-controls">
+                        <span>Sort By:</span>
+                        <button class="sort-btn" onclick="toggleSort()">
+                            <span id="sortLabel">Manual</span> <i class="fas fa-sort" id="sortIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="category-row">
+                    <span class="category-name" id="allFilter" onclick="resetFilters()">All Active</span>
+                </div>
+
+                <div id="dynamicCategories"></div>
+                <button class="btn-new-category" onclick="addNewCategory()" id="btnNewCategory">+ New Circle</button>
+                <div class="sidebar-divider"></div>
+                <div class="category-row">
+                    <span class="category-name" id="completedFilter" onclick="toggleCompletedFilter()">Archived</span>
+                    <span style="font-size: 12px; color: var(--text-muted);"><i class="fas fa-check"></i></span>
+                </div>
+            </aside>
+
+            <div class="items-grid" id="itemsGrid"></div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="modal" id="itemModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">New Contact</h2>
+            <form id="itemForm">
+                <div class="form-group" id="titleGroup">
+                    <label id="titleLabel">Contact Name</label>
+                    <input type="text" id="itemTitle" placeholder="Name or Title...">
+                </div>
+
+                <div class="form-group" id="modalConnectionGroup" style="display: none;">
+                    <label>Select Contact</label>
+                    <select id="connectionSelect" style="width: 100%; padding: 10px; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 4px;"></select>
+                </div>
+
+                <div class="form-group" id="historyTypeGroup" style="display: none;">
+                    <label>Interaction Type</label>
+                    <select id="itemInteractionType" style="width: 100%; padding: 10px; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 4px;">
+                        <option value="in-person">In-Person</option>
+                        <option value="text">Text Message</option>
+                        <option value="email">Email</option>
+                        <option value="voice">Voice Call</option>
+                        <option value="video">Video Call</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="catchUpGroup" style="display: none;">
+                    <label style="color: var(--accent-color); font-weight: 700;">Catch Up Frequency</label>
+                    <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 5px;">How often do you want to contact this person?</p>
+                    <select id="itemCatchUp" style="width: 100%; padding: 10px; background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 4px;">
+                        <option value="">None</option>
+                        <option value="7">Every Week</option>
+                        <option value="14">Every 2 Weeks</option>
+                        <option value="30">Every Month</option>
+                        <option value="90">Every 3 Months</option>
+                        <option value="180">Every 6 Months</option>
+                        <option value="365">Every Year</option>
+                    </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label id="typeLabel">Circle</label>
+                        <select id="itemType" onchange="handleTypeChange()"></select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label id="descLabel">Description</label>
+                    <textarea id="itemDescription" placeholder="Add details..."></textarea>
+                </div>
+                
+                <div class="form-group" id="modalDateGroup" style="display: none;">
+                    <div class="date-header">
+                        <label>Date & Time</label>
+                        <button type="button" class="btn-clear-date" onclick="clearDateTime()">Clear</button>
+                    </div>
+                    <div class="date-time-group">
+                        <input type="date" id="itemDate">
+                        <input type="time" id="itemTime">
+                    </div>
+                    
+                    <div class="recurring-option" id="recurringOption" style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="itemRecurring" style="width: auto;">
+                        <label for="itemRecurring" style="margin: 0; cursor: pointer; color: var(--text-main); font-size: 13px; text-transform: none;">Annually Reoccurring (Ignore Year)</label>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-text" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-text primary" title="Ctrl+Enter to save">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="settingsModal">
+        <div class="modal-content" style="max-width: 700px;">
+            <h2>Settings</h2>
+            <div class="settings-container">
+                <nav class="settings-nav">
+                    <button class="active" onclick="switchSettingsTab('tab-help')">How to Use</button>
+                    <button onclick="switchSettingsTab('tab-themes')">Themes</button>
+                    <button onclick="switchSettingsTab('tab-notifications')">Notifications</button>
+                </nav>
+                <div class="settings-content">
+                    <div id="tab-help" class="settings-tab active">
+                        <ul class="help-list" style="list-style: none; padding: 0;">
+                            <li><strong>Create:</strong> Press <code>N</code> or click the <code>+</code> button.</li>
+                            <li><strong>Drift Tracking:</strong> Set a "Catch Up Frequency" when editing a contact. Orbit will mark them as "Drifting" if you haven't logged a History item recently.</li>
+                            <li><strong>History:</strong> Use the <b>History</b> category to log interactions (In-person, Text, etc.). This resets the Drift counter.</li>
+                            <li><strong>Connections:</strong> Link contacts together using the <b>Connections</b> category.</li>
+                            <li><strong>Events:</strong> Use <b>Events</b> for birthdays (check "Reoccurring").</li>
+                        </ul>
+                    </div>
+                    <div id="tab-themes" class="settings-tab">
+                        <p style="margin-bottom: 20px; font-size: 14px; color: var(--text-muted);">Select a color scheme for your workspace.</p>
+                        <div class="theme-grid">
+                            <button class="theme-btn t-light" onclick="setTheme('light')">Light</button>
+                            <button class="theme-btn t-dark" onclick="setTheme('dark')">Dark</button>
+                            <button class="theme-btn t-mint" onclick="setTheme('light-green')">Mint Fresh</button>
+                            <button class="theme-btn t-neon" onclick="setTheme('dark-green')">Sage</button>
+                            <button class="theme-btn t-lpurple" onclick="setTheme('light-purple')">Lavender</button>
+                            <button class="theme-btn t-dpurple" onclick="setTheme('dark-purple')">Midnight</button>
+                            <button class="theme-btn t-lblue" onclick="setTheme('light-blue')">Sky</button>
+                            <button class="theme-btn t-dblue" onclick="setTheme('dark-blue')">Nautica</button>
+                            <button class="theme-btn t-pink" onclick="setTheme('pink')">Blossom</button>
+                            <button class="theme-btn t-red" onclick="setTheme('dark-red')">Crimson</button>
+                            <button class="theme-btn t-cafe" onclick="setTheme('light-cafe')">Cafe Latte</button>
+                            <button class="theme-btn t-brown" onclick="setTheme('dark-cafe')">Cafe Espresso</button>
+                            <button class="theme-btn t-ranny" onclick="setTheme('ranny')">Ranny</button>
+                        </div>
+                    </div>
+                    <div id="tab-notifications" class="settings-tab">
+                        <h3>Notifications</h3>
+                        <p style="margin-bottom: 20px; color: var(--text-muted); font-size: 14px;">
+                            Enable browser notifications.
+                        </p>
+                        <button class="btn-text primary" onclick="requestNotificationPermission()">Enable Notifications</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-text" onclick="closeSettings()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1045,8 +1045,19 @@ function setTheme(theme) {
     document.body.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
     const icon = document.getElementById('themeBtn').querySelector('i');
-    if(['dark', 'dark-green', 'dark-purple', 'dark-blue', 'dark-red', 'dark-cafe', 'ranny'].includes(theme)) icon.classList.replace('fa-moon', 'fa-sun');
-    else icon.classList.replace('fa-sun', 'fa-moon');
+    icon.classList.remove('fa-moon', 'fa-sun', 'fa-repeat');
+
+    // 2. Check if it is ANY Ranny variant
+    if (theme.startsWith('ranny')) {
+        // Show the "Cycle/Switch" icon
+        icon.classList.add('fa-repeat'); 
+    } 
+    // 3. Otherwise, check standard Dark themes
+    else {
+        const darkThemes = ['dark', 'dark-green', 'dark-purple', 'dark-blue', 'dark-red', 'dark-cafe'];
+        if (darkThemes.includes(theme)) { icon.classList.add('fa-moon'); }
+        else {icon.classList.add('fa-sun'); }
+    }
 }
 function toggleTheme() {
     const current = localStorage.getItem('theme') || 'light';

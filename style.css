@@ -731,6 +731,16 @@ input:focus, textarea:focus, select:focus { outline: none; border-bottom-color: 
 .t-cafe { background: #EBE7DE; color: #4A3C31; border-color: #9C7C58; }
 .t-ranny { background: #0a0a0a; color: #ff70b8; border-color: #ff70b8; }
 
+/* Ranny Variant Previews */
+.t-ranny-red { background: #0a0a0a; color: #ff5252; border-color: #ff5252; }
+.t-ranny-orange { background: #0a0a0a; color: #ff9100; border-color: #ff9100; }
+.t-ranny-yellow { background: #0a0a0a; color: #ffd600; border-color: #ffd600; }
+.t-ranny-mint { background: #0a0a0a; color: #64ffda; border-color: #64ffda; }
+.t-ranny-green { background: #0a0a0a; color: #00e676; border-color: #00e676; }
+.t-ranny-cyan { background: #0a0a0a; color: #00e5ff; border-color: #00e5ff; }
+.t-ranny-blue { background: #0a0a0a; color: #2979ff; border-color: #2979ff; }
+.t-ranny-purple { background: #0a0a0a; color: #7c4dff; border-color: #7c4dff; }
+
 @media (max-width: 768px) {
     .main-content { grid-template-columns: 1fr; }
     .sidebar { position: static; margin-bottom: 40px; }

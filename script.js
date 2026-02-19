@@ -1069,15 +1069,7 @@ function toggleTheme() {
         'light-blue': 'dark-blue', 'dark-blue': 'light-blue',
         'pink': 'dark-red', 'dark-red': 'pink',
         'light-cafe': 'dark-cafe', 'dark-cafe': 'light-cafe', 
-        'ranny': 'ranny-red',
-        'ranny-red': 'ranny-orange',
-        'ranny-orange': 'ranny-yellow',
-        'ranny-yellow': 'ranny-mint',
-        'ranny-mint': 'ranny-green',
-        'ranny-green': 'ranny-cyan',
-        'ranny-cyan': 'ranny-blue',
-        'ranny-blue': 'ranny-purple',
-        'ranny-purple': 'ranny'
+        'ranny': 'ranny-red', 'ranny-red': 'ranny-orange', 'ranny-orange': 'ranny-yellow', 'ranny-yellow': 'ranny-mint', 'ranny-mint': 'ranny-green', 'ranny-green': 'ranny-cyan', 'ranny-cyan': 'ranny-blue', 'ranny-blue': 'ranny-purple', 'ranny-purple': 'ranny'
     };
     if (themePairs[current]) nextTheme = themePairs[current];
     else nextTheme = current.includes('dark') ? 'light' : 'dark';
@@ -1087,7 +1079,7 @@ function triggerImport() { document.getElementById('importFile').click(); }
 function exportData() {
     const blob = new Blob([JSON.stringify({ items, categories, version: 6 }, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'foothold-contacts-data.json';
+    const a = document.createElement('a'); a.href = url; a.download = 'orbit-data.json';
     document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
 }
 function importData(input) {
